@@ -1,2 +1,4 @@
-package africa.semicolon.controllers;public class UserController {
+package africa.semicolon.controllers;
+
+public class UserController {
 }

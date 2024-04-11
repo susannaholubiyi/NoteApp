@@ -1,2 +1,4 @@
-package africa.semicolon.services;public interface NoteServices {
+package africa.semicolon.services;
+
+public interface NoteServices {
 }

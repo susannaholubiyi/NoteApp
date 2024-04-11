@@ -1,2 +1,4 @@
-package africa.semicolon.data.model;public class Note {
+package africa.semicolon.data.model;
+
+public class Note {
 }
