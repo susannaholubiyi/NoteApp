@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Document
 @Data
-public class Notes {
+public class Page {
     private String id;
     private String title;
     private String body;

@@ -3,7 +3,7 @@ package africa.semicolon.dtos;
 import lombok.Data;
 
 @Data
-public class RegisterUserRequest {
+public class CreateNoteResponse {
+    private String id;
     private String noteName;
-    private String password;
 }

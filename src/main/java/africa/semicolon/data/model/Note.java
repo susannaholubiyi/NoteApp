@@ -13,5 +13,5 @@ public class Note {
     private String password;
     private String id;
     private boolean isLocked = true;
-    private List<Notes> notes = new ArrayList<>();
+    private List<Page> pages = new ArrayList<>();
 }
