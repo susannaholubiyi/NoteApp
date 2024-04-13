@@ -8,7 +8,7 @@ import africa.semicolon.dtos.CreatePageResponse;
 import africa.semicolon.dtos.CreateNoteRequest;
 import africa.semicolon.dtos.CreateNoteResponse;
 import africa.semicolon.exceptions.NoteDoesNotExistException;
-import africa.semicolon.exceptions.UsernameAlreadyExistsException;
+import africa.semicolon.exceptions.NoteNameAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +49,7 @@ public class NoteServicesImpl implements NoteServices{
 
     private void validateUserName(String username) {
         boolean usernameExists = noteRepository.existsByNoteName(username.toLowerCase().strip());
-        if(usernameExists) throw new UsernameAlreadyExistsException(String.format("%s is a registered seller", username));
+        if(usernameExists) throw new NoteNameAlreadyExistsException(String.format("%s is a registered seller", username));
     }
     private Note findNoteBy(String noteName) {
         Optional<Note> note =  noteRepository.findByNoteName(noteName.toLowerCase().strip());

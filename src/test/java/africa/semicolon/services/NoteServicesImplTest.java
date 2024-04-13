@@ -6,7 +6,7 @@ import africa.semicolon.data.repositories.PageRepository;
 import africa.semicolon.dtos.CreatePageRequest;
 import africa.semicolon.dtos.CreateNoteRequest;
 import africa.semicolon.exceptions.NoteDoesNotExistException;
-import africa.semicolon.exceptions.UsernameAlreadyExistsException;
+import africa.semicolon.exceptions.NoteNameAlreadyExistsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ class NoteServicesImplTest {
     }
 
     @Test
-    public void registerUserTest(){
+    public void createNoteTest(){
         CreateNoteRequest createNoteRequest = new CreateNoteRequest();
         createNoteRequest.setNoteName("notename");
         createNoteRequest.setPassword("password");
@@ -40,37 +40,44 @@ class NoteServicesImplTest {
         assertEquals(1, noteRepository.count());
     }
     @Test
-    public void registerAnotherUserWithExistingUsername_usernameAlreadyExistsExceptionIsThrownTest(){
+    public void createAnotherNoteWithExistingNoteName_NoteNameAlreadyExistsExceptionIsThrownTest(){
         CreateNoteRequest createNoteRequest = new CreateNoteRequest();
         createNoteRequest.setNoteName("notename");
         createNoteRequest.setPassword("password");
         noteServices.createNote(createNoteRequest);
         assertEquals(1, noteRepository.count());
-        assertThrows(UsernameAlreadyExistsException.class, ()->noteServices.createNote(createNoteRequest));
+        assertThrows(NoteNameAlreadyExistsException.class, ()->noteServices.createNote(createNoteRequest));
     }
     @Test
-    public void registerUserWithNullUsername_nullPointerExceptionIsThrownTest(){
+    public void createNoteWithNullNoteName_nullPointerExceptionIsThrownTest(){
         CreateNoteRequest createNoteRequest = new CreateNoteRequest();
         createNoteRequest.setNoteName(null);
         createNoteRequest.setPassword("password");
         assertThrows(NullPointerException.class,()->noteServices.createNote(createNoteRequest));
     }
     @Test
-    public void registerUserWithNullPassword_nullPointerExceptionIsThrownTest(){
+    public void createNoteWithNullPassword_nullPointerExceptionIsThrownTest(){
         CreateNoteRequest createNoteRequest = new CreateNoteRequest();
         createNoteRequest.setNoteName("notename");
         createNoteRequest.setPassword(null);
         assertThrows(NullPointerException.class,()->noteServices.createNote(createNoteRequest));
     }
     @Test
-    public void registerUserWithEmptyPassword_nullPointerExceptionIsThrownTest(){
+    public void createNoteWithEmptyPassword_nullPointerExceptionIsThrownTest(){
         CreateNoteRequest createNoteRequest = new CreateNoteRequest();
         createNoteRequest.setNoteName("notename");
         createNoteRequest.setPassword("");
         assertThrows(IllegalArgumentException.class,()->noteServices.createNote(createNoteRequest));
     }
     @Test
-    public void registerUser_createPageTest(){
+    public void createNoteWithEmptyNoteName_nullPointerExceptionIsThrownTest(){
+        CreateNoteRequest createNoteRequest = new CreateNoteRequest();
+        createNoteRequest.setNoteName("");
+        createNoteRequest.setPassword("password");
+        assertThrows(IllegalArgumentException.class,()->noteServices.createNote(createNoteRequest));
+    }
+    @Test
+    public void createNote_createPageTest(){
         CreateNoteRequest createNoteRequest = new CreateNoteRequest();
         createNoteRequest.setNoteName("notename");
         createNoteRequest.setPassword("password");
