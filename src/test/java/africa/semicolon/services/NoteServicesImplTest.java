@@ -4,10 +4,7 @@ import africa.semicolon.data.model.Note;
 import africa.semicolon.data.model.Page;
 import africa.semicolon.data.repositories.NoteRepository;
 import africa.semicolon.data.repositories.PageRepository;
-import africa.semicolon.dtos.CreatePageRequest;
-import africa.semicolon.dtos.CreateNoteRequest;
-import africa.semicolon.dtos.EditPageRequest;
-import africa.semicolon.dtos.ViewAllPagesRequest;
+import africa.semicolon.dtos.*;
 import africa.semicolon.exceptions.NoteDoesNotExistException;
 import africa.semicolon.exceptions.NoteNameAlreadyExistsException;
 import africa.semicolon.exceptions.PageDoesNotExistException;
@@ -379,6 +376,65 @@ class NoteServicesImplTest {
         editPageRequest.setNewTitle("new title");
         editPageRequest.setNewBody("new body");
         assertThrows(NoteDoesNotExistException.class, ()->noteServices.editPage(editPageRequest));
+    }
+    @Test
+    public void createNote_createTwoPages_viewOnePageTest(){
+        CreateNoteRequest createNoteRequest = new CreateNoteRequest();
+        createNoteRequest.setNoteName("notename");
+        createNoteRequest.setPassword("password");
+        noteServices.createNote(createNoteRequest);
+        Optional<Note> note = noteRepository.findByNoteName("notename");
+        assertTrue(note.isPresent());
+        assertEquals(1, noteRepository.count());
+
+        CreatePageRequest createPageRequest = new CreatePageRequest();
+        createPageRequest.setNoteName("notename");
+        createPageRequest.setTitle("title");
+        createPageRequest.setBody("body");
+        noteServices.createPage(createPageRequest);
+
+        CreatePageRequest createPageRequest2 = new CreatePageRequest();
+        createPageRequest2.setNoteName("notename");
+        createPageRequest2.setTitle("title two");
+        createPageRequest2.setBody("body two");
+        noteServices.createPage(createPageRequest);
+
+        note = noteRepository.findByNoteName("notename");
+        assertTrue(note.isPresent());
+        assertEquals(2, pageRepository.count());
+        assertEquals(2, note.get().getPages().size());
+
+        ViewPageRequest viewPageRequest = new ViewPageRequest();
+        Page page = note.get().getPages().get(0);
+        viewPageRequest.setNoteName("notename");
+        viewPageRequest.setPageId(page.getId());
+        ViewPageResponse response = noteServices.viewOneParticularPageWith(viewPageRequest);
+        assertNotNull(response);
+        assertEquals(page.getTitle(), response.getTitle());
+    }
+    @Test
+    public void createNote_viewAPageThatDoesNotExist_PageDoesNotExistExceptionIsThrownTest(){
+        CreateNoteRequest createNoteRequest = new CreateNoteRequest();
+        createNoteRequest.setNoteName("notename");
+        createNoteRequest.setPassword("password");
+        noteServices.createNote(createNoteRequest);
+        Optional<Note> note = noteRepository.findByNoteName("notename");
+        assertTrue(note.isPresent());
+        assertEquals(1, noteRepository.count());
+
+        ViewPageRequest viewPageRequest = new ViewPageRequest();
+        viewPageRequest.setNoteName("notename");
+        viewPageRequest.setPageId("1");
+        assertThrows(PageDoesNotExistException.class, ()->noteServices.viewOneParticularPageWith(viewPageRequest)) ;
+
+    }
+    @Test
+    public void iewAPageOfNoteThatDoesNotExist_NoteDoesNotExistExceptionIsThrownTest(){
+        ViewPageRequest viewPageRequest = new ViewPageRequest();
+        viewPageRequest.setNoteName("notename");
+        viewPageRequest.setPageId("1");
+        assertThrows(NoteDoesNotExistException.class, ()->noteServices.viewOneParticularPageWith(viewPageRequest)) ;
+
     }
 
 

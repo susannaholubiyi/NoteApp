@@ -48,4 +48,11 @@ public class Mappers {
         editPageResponse.setNewBody(page.getBody());
         return editPageResponse;
     }
+    public static ViewPageResponse mapViewPageResponse(Page page){
+        ViewPageResponse viewPageResponse = new ViewPageResponse();
+        viewPageResponse.setDateCreated(String.valueOf(page.getDateCreated()));
+        viewPageResponse.setTitle(page.getTitle());
+        viewPageResponse.setBody(page.getBody());
+        return viewPageResponse;
+    }
 }

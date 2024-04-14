@@ -12,6 +12,8 @@ public interface NoteServices {
 
     EditPageResponse editPage(EditPageRequest editPageRequest);
 
+    ViewPageResponse viewOneParticularPageWith(ViewPageRequest viewPageRequest);
+
     List<Page> viewAllPages();
 
     List<Page> viewPages(ViewAllPagesRequest viewAllPagesRequest);

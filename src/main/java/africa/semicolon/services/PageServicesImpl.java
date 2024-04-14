@@ -6,6 +6,8 @@ import africa.semicolon.data.repositories.NoteRepository;
 import africa.semicolon.data.repositories.PageRepository;
 import africa.semicolon.dtos.CreatePageRequest;
 import africa.semicolon.dtos.EditPageRequest;
+import africa.semicolon.dtos.ViewPageRequest;
+import africa.semicolon.dtos.ViewPageResponse;
 import africa.semicolon.exceptions.NoteDoesNotExistException;
 import africa.semicolon.exceptions.PageDoesNotExistException;
 import africa.semicolon.utils.Mappers;
@@ -17,7 +19,7 @@ import java.util.Optional;
 
 import static africa.semicolon.utils.Helpers.validateIfEmpty;
 import static africa.semicolon.utils.Helpers.validateIfNull;
-import static africa.semicolon.utils.Mappers.mapEditPageResponse;
+import static africa.semicolon.utils.Mappers.mapViewPageResponse;
 
 @Service
 public class PageServicesImpl implements PageServices {
@@ -52,10 +54,46 @@ public class PageServicesImpl implements PageServices {
     pageRepository.save(editedPage);
     return editedPage;
     }
+    @Override
+    public ViewPageResponse viewOneParticularPageWith(ViewPageRequest viewPageRequest) {
+        validateViewPageRequest(viewPageRequest);
+        Optional<Note> optionalNote = noteRepository.findByNoteName(viewPageRequest.getNoteName().toLowerCase().strip());
+        checkIfNoteExistsWith(viewPageRequest, optionalNote);
+        Optional<Page> optionalPage = getPageFrom(viewPageRequest, optionalNote);
+        validatePage(optionalPage);
+        Page page = optionalPage.get();
+        pageRepository.save(page);
+        return  mapViewPageResponse(page);
+    }
+
+    private static void validateViewPageRequest(ViewPageRequest viewPageRequest) {
+        validateIfEmpty(viewPageRequest.getNoteName());
+        validateIfEmpty(viewPageRequest.getPageId());
+        validateIfNull(viewPageRequest.getNoteName());
+        validateIfNull(viewPageRequest.getPageId());
+    }
+    private static Optional<Page> getPageFrom(ViewPageRequest viewPageRequest, Optional<Note> optionalNote) {
+        Note note = optionalNote.get();
+        Optional<Page> adOptional;
+        adOptional = note.getPages().stream()
+                .filter(ad -> ad.getId().equals(viewPageRequest.getPageId()))
+                .findFirst();
+        return adOptional;
+    }
+    private static void validatePage(Optional<Page> optionalPage) {
+        if (optionalPage.isEmpty()) {
+            throw new PageDoesNotExistException("Page not found: ");
+        }
+    }
 
     @Override
     public List<Page> viewAllPages() {
         return pageRepository.findAll();
+    }
+    private static void checkIfNoteExistsWith(ViewPageRequest viewPageRequest, Optional<Note> optionalNote) {
+        if (optionalNote.isEmpty()) {
+            throw new NoteDoesNotExistException(String.format("Note with note name %s not found: ", viewPageRequest.getNoteName()));
+        }
     }
 
     private static void validateEditPageRequest(EditPageRequest editPageRequest) {

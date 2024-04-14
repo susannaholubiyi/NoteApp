@@ -52,6 +52,12 @@ public class NoteServicesImpl implements NoteServices{
         return mapEditPageResponse(page);
     }
     @Override
+    public ViewPageResponse viewOneParticularPageWith(ViewPageRequest viewPageRequest){
+        Note note = findNoteBy(viewPageRequest.getNoteName().toLowerCase());
+        return  pageServices.viewOneParticularPageWith(viewPageRequest);
+
+    }
+    @Override
     public List<Page> viewAllPages() {
         return  pageServices.viewAllPages();
 

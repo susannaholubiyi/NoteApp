@@ -48,6 +48,15 @@ public class UserController {
             return new ResponseEntity<>(new ApiResponse(false, e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
+    @GetMapping("/view-one-page")
+    public ResponseEntity<?> viewOnePage(@RequestBody ViewPageRequest viewPageRequest){
+        try {
+            var response = noteServices.viewOneParticularPageWith(viewPageRequest);
+            return new ResponseEntity<>(new ApiResponse(true,response), HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(new ApiResponse(false, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
     @GetMapping("/view-pages-in-a-note")
     public ResponseEntity<?> viewAParticularNotePages(@RequestBody ViewAllPagesRequest viewAllPagesRequest){
         try {
