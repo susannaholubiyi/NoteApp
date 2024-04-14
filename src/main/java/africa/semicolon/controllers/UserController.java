@@ -39,7 +39,7 @@ public class UserController {
             return new ResponseEntity<>(new ApiResponse(false, e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
-    @DeleteMapping("/delete-ad")
+    @DeleteMapping("/delete-page")
     public ResponseEntity<?> deleteAd(@RequestBody DeletePageRequest deletePageRequest){
         try {
             var response =  noteServices.deletePage(deletePageRequest);
