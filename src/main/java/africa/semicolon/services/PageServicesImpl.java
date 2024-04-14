@@ -4,10 +4,7 @@ import africa.semicolon.data.model.Note;
 import africa.semicolon.data.model.Page;
 import africa.semicolon.data.repositories.NoteRepository;
 import africa.semicolon.data.repositories.PageRepository;
-import africa.semicolon.dtos.CreatePageRequest;
-import africa.semicolon.dtos.EditPageRequest;
-import africa.semicolon.dtos.ViewPageRequest;
-import africa.semicolon.dtos.ViewPageResponse;
+import africa.semicolon.dtos.*;
 import africa.semicolon.exceptions.NoteDoesNotExistException;
 import africa.semicolon.exceptions.PageDoesNotExistException;
 import africa.semicolon.utils.Mappers;
@@ -64,6 +61,37 @@ public class PageServicesImpl implements PageServices {
         Page page = optionalPage.get();
         pageRepository.save(page);
         return  mapViewPageResponse(page);
+    }
+    @Override
+    public DeletePageResponse deletePage(DeletePageRequest deletePageRequest){
+        validateDeletePageRequests(deletePageRequest);
+        Optional<Note> noteOptional = noteRepository.findByNoteName(deletePageRequest.getNoteName().toLowerCase().strip());
+        if (noteOptional.isEmpty()) {
+            throw new NoteDoesNotExistException(String.format("Seller not found with username: " + deletePageRequest.getNoteName()));
+        }
+        Note note = noteOptional.get();
+        Optional<Page> pageOptional = getPageToBeDeletedFrom(deletePageRequest, noteOptional);
+        validatePage( pageOptional);
+        Page page = pageOptional.get();
+        note.getPages().remove(page);
+        pageRepository.delete(page);
+        note.getPages().remove(page);
+        noteRepository.save(note);
+        return new DeletePageResponse();
+    }
+    private static void validateDeletePageRequests(DeletePageRequest deletePageRequest) {
+        validateIfEmpty(deletePageRequest.getNoteName());
+        validateIfEmpty(deletePageRequest.getPageId());
+        validateIfNull(deletePageRequest.getNoteName());
+        validateIfNull(deletePageRequest.getPageId());
+    }
+    private static Optional<Page> getPageToBeDeletedFrom(DeletePageRequest deletePageRequest, Optional<Note> optionalNote) {
+        Note note = optionalNote.get();
+        Optional<Page> pageOptional;
+        pageOptional = note.getPages().stream()
+                .filter(ad -> ad.getId().equals(deletePageRequest.getPageId()))
+                .findFirst();
+        return pageOptional;
     }
 
     private static void validateViewPageRequest(ViewPageRequest viewPageRequest) {

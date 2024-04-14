@@ -324,7 +324,6 @@ class NoteServicesImplTest {
         note = noteRepository.findByNoteName("notename");
         pageRepository.findById(note.get().getPages().get(0).getId());
         System.out.println(note.get().getPages());
-        assertTrue(note.isPresent());
         assertEquals(1, pageRepository.count());
         assertEquals("new title", note.get().getPages().get(0).getTitle());
 
@@ -434,6 +433,44 @@ class NoteServicesImplTest {
         viewPageRequest.setNoteName("notename");
         viewPageRequest.setPageId("1");
         assertThrows(NoteDoesNotExistException.class, ()->noteServices.viewOneParticularPageWith(viewPageRequest)) ;
+    }
+    @Test
+    public void createNote_createTwoPages_deleteFirstPageTest(){
+        CreateNoteRequest createNoteRequest = new CreateNoteRequest();
+        createNoteRequest.setNoteName("notename");
+        createNoteRequest.setPassword("password");
+        noteServices.createNote(createNoteRequest);
+        Optional<Note> note = noteRepository.findByNoteName("notename");
+        assertTrue(note.isPresent());
+        assertEquals(1, noteRepository.count());
+
+        CreatePageRequest createPageRequest = new CreatePageRequest();
+        createPageRequest.setNoteName("notename");
+        createPageRequest.setTitle("title");
+        createPageRequest.setBody("body");
+        noteServices.createPage(createPageRequest);
+
+        CreatePageRequest createPageRequest2 = new CreatePageRequest();
+        createPageRequest2.setNoteName("notename");
+        createPageRequest2.setTitle("title two");
+        createPageRequest2.setBody("body two");
+        noteServices.createPage(createPageRequest);
+
+        note = noteRepository.findByNoteName("notename");
+        assertTrue(note.isPresent());
+        assertEquals(2, pageRepository.count());
+        assertEquals(2, note.get().getPages().size());
+
+        DeletePageRequest deletePageRequest = new DeletePageRequest();
+        deletePageRequest.setNoteName("notename");
+        Page page = note.get().getPages().get(0);
+        deletePageRequest.setPageId(page.getId());
+        noteServices.deletePage(deletePageRequest);
+
+        note = noteRepository.findByNoteName("notename");
+        assertTrue(note.isPresent());
+        assertEquals(1, pageRepository.count());
+        assertEquals(1, note.get().getPages().size());
 
     }
 

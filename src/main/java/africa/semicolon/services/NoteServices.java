@@ -17,4 +17,6 @@ public interface NoteServices {
     List<Page> viewAllPages();
 
     List<Page> viewPages(ViewAllPagesRequest viewAllPagesRequest);
+
+    DeletePageResponse deletePage(DeletePageRequest deletePageRequest);
 }

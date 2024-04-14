@@ -53,7 +53,6 @@ public class NoteServicesImpl implements NoteServices{
     }
     @Override
     public ViewPageResponse viewOneParticularPageWith(ViewPageRequest viewPageRequest){
-        Note note = findNoteBy(viewPageRequest.getNoteName().toLowerCase());
         return  pageServices.viewOneParticularPageWith(viewPageRequest);
 
     }
@@ -67,6 +66,10 @@ public class NoteServicesImpl implements NoteServices{
         Note note = findNoteBy(viewAllPagesRequest.getNoteName().toLowerCase());
         return note.getPages();
 
+    }
+    @Override
+    public DeletePageResponse deletePage(DeletePageRequest deletePageRequest){
+        return pageServices.deletePage(deletePageRequest);
     }
 
     private void validateUserName(String username) {

@@ -39,6 +39,14 @@ public class UserController {
             return new ResponseEntity<>(new ApiResponse(false, e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
+    @DeleteMapping("/delete-ad")
+    public ResponseEntity<?> deleteAd(@RequestBody DeletePageRequest deletePageRequest){
+        try {
+            var response =  noteServices.deletePage(deletePageRequest);
+            return new ResponseEntity<>(new ApiResponse(true,response), HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(new ApiResponse(false, e.getMessage()), HttpStatus.BAD_REQUEST);        }
+    }
     @GetMapping("/view-all-pages")
     public ResponseEntity<?> viewAllPages(){
         try {
