@@ -3,15 +3,13 @@ package africa.semicolon.services;
 import africa.semicolon.data.model.Note;
 import africa.semicolon.data.model.Page;
 import africa.semicolon.data.repositories.NoteRepository;
-import africa.semicolon.dtos.CreatePageRequest;
-import africa.semicolon.dtos.CreatePageResponse;
-import africa.semicolon.dtos.CreateNoteRequest;
-import africa.semicolon.dtos.CreateNoteResponse;
+import africa.semicolon.dtos.*;
 import africa.semicolon.exceptions.NoteDoesNotExistException;
 import africa.semicolon.exceptions.NoteNameAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 import static africa.semicolon.utils.Helpers.validateIfEmpty;
@@ -46,10 +44,28 @@ public class NoteServicesImpl implements NoteServices{
         noteRepository.save(note);
         return mapCreatePage(newPage);
     }
+    @Override
+    public EditPageResponse editPage(EditPageRequest editPageRequest){
+        Note note = findNoteBy(editPageRequest.getNoteName().toLowerCase());
+        Page page = pageServices.editPage(editPageRequest);
+        noteRepository.save(note);
+        return mapEditPageResponse(page);
+    }
+    @Override
+    public List<Page> viewAllPages() {
+        return  pageServices.viewAllPages();
+
+    }
+    @Override
+    public List<Page> viewPages(ViewAllPagesRequest viewAllPagesRequest){
+        Note note = findNoteBy(viewAllPagesRequest.getNoteName().toLowerCase());
+        return note.getPages();
+
+    }
 
     private void validateUserName(String username) {
         boolean usernameExists = noteRepository.existsByNoteName(username.toLowerCase().strip());
-        if(usernameExists) throw new NoteNameAlreadyExistsException(String.format("%s is a registered seller", username));
+        if(usernameExists) throw new NoteNameAlreadyExistsException(String.format("A note with %s as a name has already been created, use a unique noteName ", username));
     }
     private Note findNoteBy(String noteName) {
         Optional<Note> note =  noteRepository.findByNoteName(noteName.toLowerCase().strip());

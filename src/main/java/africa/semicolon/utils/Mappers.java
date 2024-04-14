@@ -2,10 +2,7 @@ package africa.semicolon.utils;
 
 import africa.semicolon.data.model.Note;
 import africa.semicolon.data.model.Page;
-import africa.semicolon.dtos.CreatePageRequest;
-import africa.semicolon.dtos.CreatePageResponse;
-import africa.semicolon.dtos.CreateNoteRequest;
-import africa.semicolon.dtos.CreateNoteResponse;
+import africa.semicolon.dtos.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -33,10 +30,22 @@ public class Mappers {
     }
     public static CreatePageResponse mapCreatePage(Page page){
         CreatePageResponse createPageResponse = new CreatePageResponse();
+        createPageResponse.setDateCreated(DateTimeFormatter.ofPattern("dd/MM/yyyy").format(LocalDateTime.now()));
         createPageResponse.setTitle(page.getTitle());
         createPageResponse.setBody(page.getBody());
         createPageResponse.setPageId(page.getId());
-        createPageResponse.setDateCreated(DateTimeFormatter.ofPattern("dd/MM/yyyy").format(LocalDateTime.now()));
         return createPageResponse;
+    }
+    public static Page mapEditPageRequest(EditPageRequest editPageRequest, Page page){
+        page.setTitle(editPageRequest.getNewTitle());
+        page.setBody(editPageRequest.getNewBody());
+        return page;
+    }
+    public static EditPageResponse mapEditPageResponse(Page page){
+        EditPageResponse editPageResponse = new EditPageResponse();
+        editPageResponse.setDateEdited(DateTimeFormatter.ofPattern("dd/MM/yyyy").format(LocalDateTime.now()));
+        editPageResponse.setNewTitle(page.getTitle());
+        editPageResponse.setNewBody(page.getBody());
+        return editPageResponse;
     }
 }

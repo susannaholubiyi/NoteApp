@@ -1,12 +1,18 @@
 package africa.semicolon.services;
 
-import africa.semicolon.dtos.CreatePageRequest;
-import africa.semicolon.dtos.CreatePageResponse;
-import africa.semicolon.dtos.CreateNoteRequest;
-import africa.semicolon.dtos.CreateNoteResponse;
+import africa.semicolon.data.model.Page;
+import africa.semicolon.dtos.*;
+
+import java.util.List;
 
 public interface NoteServices {
     CreateNoteResponse createNote(CreateNoteRequest createNoteRequest);
 
     CreatePageResponse createPage(CreatePageRequest createNotesRequest);
+
+    EditPageResponse editPage(EditPageRequest editPageRequest);
+
+    List<Page> viewAllPages();
+
+    List<Page> viewPages(ViewAllPagesRequest viewAllPagesRequest);
 }
