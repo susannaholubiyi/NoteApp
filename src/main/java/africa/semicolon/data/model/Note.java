@@ -1,6 +1,7 @@
 package africa.semicolon.data.model;
 
 import lombok.Data;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
@@ -13,5 +14,6 @@ public class Note {
     private String password;
     private String id;
     private boolean isLocked = true;
+    @DBRef
     private List<Page> pages = new ArrayList<>();
 }

@@ -1,9 +1,6 @@
 package africa.semicolon.controllers;
 
-import africa.semicolon.dtos.ApiResponse;
-import africa.semicolon.dtos.CreateNoteRequest;
-import africa.semicolon.dtos.CreatePageRequest;
-import africa.semicolon.dtos.ViewAllPagesRequest;
+import africa.semicolon.dtos.*;
 import africa.semicolon.services.NoteServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +25,15 @@ public class UserController {
     public ResponseEntity<?> createPage(@RequestBody CreatePageRequest createPageRequest){
         try {
             var response =  noteServices.createPage(createPageRequest);
+            return new ResponseEntity<>(new ApiResponse(true,response), HttpStatus.CREATED);
+        }catch (Exception e){
+            return new ResponseEntity<>(new ApiResponse(false, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+    @PostMapping("/edit-page")
+    public ResponseEntity<?> editPage(@RequestBody EditPageRequest editPageRequest){
+        try {
+            var response =  noteServices.editPage(editPageRequest);
             return new ResponseEntity<>(new ApiResponse(true,response), HttpStatus.CREATED);
         }catch (Exception e){
             return new ResponseEntity<>(new ApiResponse(false, e.getMessage()), HttpStatus.BAD_REQUEST);

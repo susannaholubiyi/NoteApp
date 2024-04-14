@@ -10,6 +10,7 @@ import africa.semicolon.dtos.EditPageRequest;
 import africa.semicolon.dtos.ViewAllPagesRequest;
 import africa.semicolon.exceptions.NoteDoesNotExistException;
 import africa.semicolon.exceptions.NoteNameAlreadyExistsException;
+import africa.semicolon.exceptions.PageDoesNotExistException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -330,6 +331,54 @@ class NoteServicesImplTest {
         assertEquals(1, pageRepository.count());
         assertEquals("new title", note.get().getPages().get(0).getTitle());
 
+    }
+    @Test
+    public void createNote_editPageWithoutCreatingOne_PageDoesNotExistExceptionIsThrownTest(){
+        CreateNoteRequest createNoteRequest = new CreateNoteRequest();
+        createNoteRequest.setNoteName("notename");
+        createNoteRequest.setPassword("password");
+        noteServices.createNote(createNoteRequest);
+        Optional<Note> note = noteRepository.findByNoteName("notename");
+        assertTrue(note.isPresent());
+        assertEquals(1, noteRepository.count());
+
+        EditPageRequest editPageRequest = new EditPageRequest();
+        editPageRequest.setPageId("1");
+        editPageRequest.setNoteName("notename");
+        editPageRequest.setNewTitle("new title");
+        editPageRequest.setNewBody("new body");
+        assertThrows(PageDoesNotExistException.class, ()->noteServices.editPage(editPageRequest));
+    }
+    @Test
+    public void createNote_editPageWithDifferentNoteName_PageDoesNotExistExceptionIsThrownTest(){
+        CreateNoteRequest createNoteRequest = new CreateNoteRequest();
+        createNoteRequest.setNoteName("notename");
+        createNoteRequest.setPassword("password");
+        noteServices.createNote(createNoteRequest);
+        Optional<Note> note = noteRepository.findByNoteName("notename");
+        assertTrue(note.isPresent());
+        assertEquals(1, noteRepository.count());
+
+        CreatePageRequest createPageRequest = new CreatePageRequest();
+        createPageRequest.setNoteName("notename");
+        createPageRequest.setTitle("title");
+        createPageRequest.setBody("body");
+        noteServices.createPage(createPageRequest);
+
+        note = noteRepository.findByNoteName("notename");
+        assertTrue(note.isPresent());
+        assertEquals(1, pageRepository.count());
+        assertEquals(1, note.get().getPages().size());
+        Page page = note.get().getPages().get(0);
+        assertEquals("title", page.getTitle());
+
+        EditPageRequest editPageRequest = new EditPageRequest();
+        page = note.get().getPages().get(0);
+        editPageRequest.setPageId(page.getId());
+        editPageRequest.setNoteName("notename2");
+        editPageRequest.setNewTitle("new title");
+        editPageRequest.setNewBody("new body");
+        assertThrows(NoteDoesNotExistException.class, ()->noteServices.editPage(editPageRequest));
     }
 
 
